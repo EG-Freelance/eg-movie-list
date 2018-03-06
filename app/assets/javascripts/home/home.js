@@ -41,7 +41,6 @@ angular.module('EgMovieList.Home', [
   homeCtrl.reverseSort = false;
   homeCtrl.sortFunction = sortFunction;
   homeCtrl.icon = 'keyboard_arrow_up';
-  homeCtrl.password_check = 'Movies2017';
   homeCtrl.tab = 1;
   homeCtrl.selectTab = function (setTab){
   	homeCtrl.tab = setTab;
@@ -185,26 +184,32 @@ angular.module('EgMovieList.Home', [
   }
   
   function uploadFile(file){
-    file.upload = Upload.upload({
-      url: '/api/upload_file',
-      data: {file: file},
-    });
-
-    file.upload.then(function (response) {
-      httpResponse("success");
-      $timeout(function(){ httpResponse("revert") }, 3000);
-      $timeout(function() {
-        file.result = response.data;
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
+    }).then(function(response){
+      file.upload = Upload.upload({
+        url: '/api/upload_file',
+        data: {file: file},
       });
-    }, function (response) {
-      if (response.status > 0)
-        httpResponse("failure");
+  
+      file.upload.then(function (response) {
+        httpResponse("success");
         $timeout(function(){ httpResponse("revert") }, 3000);
-        homeCtrl.errorMsg = response.status + ': ' + response.data;
-    }, function (evt) {
-      // Math.min is to fix IE which reports 200% sometimes
-      file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
-    });
+        $timeout(function() {
+          file.result = response.data;
+        });
+      }, function (response) {
+        if (response.status > 0)
+          httpResponse("failure");
+          $timeout(function(){ httpResponse("revert") }, 3000);
+          homeCtrl.errorMsg = response.status + ': ' + response.data;
+      }, function (evt) {
+        // Math.min is to fix IE which reports 200% sometimes
+        file.progress = Math.min(100, parseInt(100.0 * evt.loaded / evt.total));
+      });
+    }, function(data, status) {
+      $log.log(data.error + ' ' + status);
+    })
   }
   
   function exportListings() {
@@ -233,53 +238,65 @@ angular.module('EgMovieList.Home', [
   }
   
   function import_listing(imdb_id, search_title, display_title, year, media, season, location, owner, notes, holiday) {
-    $http.post('/api/import_listing', {
-      imdb_id: imdb_id,
-      search_title: search_title,
-      display_title: display_title,
-      year: year,
-      media: media,
-      location: location,
-      season: season,
-      owner: owner,
-      notes: notes,
-      holiday: holiday
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
     }).then(function(response){
-      init();
-      httpResponse("success");
-      $timeout(function(){ httpResponse("revert") }, 3000);
+      $http.post('/api/import_listing', {
+        imdb_id: imdb_id,
+        search_title: search_title,
+        display_title: display_title,
+        year: year,
+        media: media,
+        location: location,
+        season: season,
+        owner: owner,
+        notes: notes,
+        holiday: holiday
+      }).then(function(response){
+        init();
+        httpResponse("success");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+      }, function(data, status) {
+        httpResponse("failure");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+        $log.log(data.error + ' ' + status);
+      });
     }, function(data, status) {
-      httpResponse("failure");
-      $timeout(function(){ httpResponse("revert") }, 3000);
       $log.log(data.error + ' ' + status);
-    });
+    })
   }
 
   function add_listing(title, year, media_type, runtime, location, owner, genres, actors, directors, writers, imdb_rating, rt_rating, notes) {
-    $http.post('/api/add_listing', {
-      title: title,
-      year: year,
-      media_type: media_type,
-      runtime: runtime,
-      location: location,
-      owner: owner,
-      genres: genres,
-      actors: actors,
-      directors: directors,
-      writers: writers,
-      imdb_rating: imdb_rating || 0,
-      rt_rating: rt_rating || 0,
-      notes: notes
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
     }).then(function(response){
-      homeCtrl.httpResponse("success");
-      $timeout(function(){ httpResponse("revert") }, 3000);
-      // Instead of running init() automatically, should leave as is and allow user to refresh manually
-      // init();
+      $http.post('/api/add_listing', {
+        title: title,
+        year: year,
+        media_type: media_type,
+        runtime: runtime,
+        location: location,
+        owner: owner,
+        genres: genres,
+        actors: actors,
+        directors: directors,
+        writers: writers,
+        imdb_rating: imdb_rating || 0,
+        rt_rating: rt_rating || 0,
+        notes: notes
+      }).then(function(response){
+        homeCtrl.httpResponse("success");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+        // Instead of running init() automatically, should leave as is and allow user to refresh manually
+        // init();
+      }, function(data, status) {
+        httpResponse("failure");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+        $log.log(data.error + ' ' + status);
+      });
     }, function(data, status) {
-      httpResponse("failure");
-      $timeout(function(){ httpResponse("revert") }, 3000);
       $log.log(data.error + ' ' + status);
-    });
+    })
   }
   
   function createListing(title){
@@ -299,8 +316,14 @@ angular.module('EgMovieList.Home', [
   }
   
   function deleteListing(id){
-    $http.delete('/api/delete_listing/' + id + '.json').then(function(){
-      init();
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
+    }).then(function(response){
+      $http.delete('/api/delete_listing/' + id  + '.json').then(function(){
+        init();
+      })
+    }, function(data, status) {
+      $log.log(data.error + ' ' + status);
     })
   }
   
@@ -346,25 +369,36 @@ angular.module('EgMovieList.Home', [
    * ***********************/
    
   function removeFailure(id){
-    $http.delete('/api/delete_failure/' + id + '.json').then(function(response){
-      failuresFactory.getFailures()
-        .then(function(response2){
-        homeCtrl.failures = $filter('orderBy')($filter('filter')(response2.data, { 'failed_attempt':'2' } ), 'created_at');
-      }, function(data, status) {
-        $log.log(data.error + ' ' + status);
-      });
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
+    }).then(function(response){
+      $http.delete('/api/delete_failure/' + id + '.json').then(function(response){
+        failuresFactory.getFailures()
+          .then(function(response2){
+          homeCtrl.failures = $filter('orderBy')($filter('filter')(response2.data, { 'failed_attempt':'2' } ), 'created_at');
+        }, function(data, status) {
+          $log.log(data.error + ' ' + status);
+        });
+      })
+    }, function(data, status) {
+      $log.log(data.error + ' ' + status);
     })
   }
  
   function removeAllFailures(){
-    $http.delete('/api/delete_all_failures').then(function(response){
-      failuresFactory.getFailures()
-        .then(function(response2){
-        homeCtrl.failures = $filter('orderBy')($filter('filter')(response2.data, { 'failed_attempt':'2' } ), 'created_at');
-      }, function(data, status) {
-        $log.log(data.error + ' ' + status);
-      });
-
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
+    }).then(function(response){
+      $http.delete('/api/delete_all_failures').then(function(response){
+        failuresFactory.getFailures()
+          .then(function(response2){
+          homeCtrl.failures = $filter('orderBy')($filter('filter')(response2.data, { 'failed_attempt':'2' } ), 'created_at');
+        }, function(data, status) {
+          $log.log(data.error + ' ' + status);
+        });
+      })
+    }, function(data, status) {
+      $log.log(data.error + ' ' + status);
     })
   }
   
@@ -373,37 +407,44 @@ angular.module('EgMovieList.Home', [
    * ************************/
   
   function updateListing(listing){
-    homeCtrl.params = { id: listing.id, title: listing.title, genres: listing.genres, actors: listing.actors, directors: listing.directors, writers: listing.writers, media_type: listing.media_type, location: listing.location, owner: listing.owner, imdb_rating: listing.imdb_rating, rt_rating: listing.rt_rating, year: listing.year, runtime: listing.runtime, plot: listing.plot, poster_url: listing.poster_url, notes: listing.notes, imdb_id: listing.imdb_id };
+    homeCtrl.params = { id: listing.id, title: listing.title, genres: listing.genres, actors: listing.actors, directors: listing.directors, writers: listing.writers, media_type: listing.media_type, location: listing.location, owner: listing.owner, imdb_rating: listing.imdb_rating, rt_rating: listing.rt_rating, year: listing.year, runtime: listing.runtime, plot: listing.plot, poster_url: listing.poster_url, notes: listing.notes, imdb_id: listing.imdb_id};
   }
   
   function editListing(id, title, genres, actors, directors, writers, media_type, location, owner, imdb_rating, rt_rating, year, runtime, plot, poster_url, notes, imdb_id){
-    $http.post('/api/edit_listing', {
-      id: id,
-      title: title,
-      genres: genres,
-      actors: actors,
-      directors: directors,
-      writers: writers,
-      media_type: media_type,
-      location: location,
-      owner: owner,
-      imdb_rating: imdb_rating,
-      rt_rating: rt_rating,
-      year: year,
-      runtime: runtime,
-      plot: plot,
-      poster_url: poster_url,
-      notes: notes,
-      imdb_id: imdb_id
+    $http.post('/api/authenticate', {
+      password: homeCtrl.ioPassword
     }).then(function(response){
-      homeCtrl.httpResponse("success");
-      $timeout(function(){ httpResponse("revert") }, 3000);
-      init();
+      $http.post('/api/edit_listing/', {
+        id: id,
+        title: title,
+        genres: genres,
+        actors: actors,
+        directors: directors,
+        writers: writers,
+        media_type: media_type,
+        location: location,
+        owner: owner,
+        imdb_rating: imdb_rating,
+        rt_rating: rt_rating,
+        year: year,
+        runtime: runtime,
+        plot: plot,
+        poster_url: poster_url,
+        notes: notes,
+        imdb_id: imdb_id,
+        password: homeCtrl.ioPassword
+      }).then(function(response2){
+        homeCtrl.httpResponse("success");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+        init();
+      }, function(data, status) {
+        httpResponse("failure");
+        $timeout(function(){ httpResponse("revert") }, 3000);
+        $log.log(data.error + ' ' + status);
+      });
     }, function(data, status) {
-      httpResponse("failure");
-      $timeout(function(){ httpResponse("revert") }, 3000);
       $log.log(data.error + ' ' + status);
-    });
+    })
   }
 
   homeCtrl.animationsEnabled = true;
@@ -446,10 +487,10 @@ angular.module('EgMovieList.Home', [
           params[14], //plot
           params[15], //poster_url
           params[16], //notes
-          params[17]  //imdb_id
+          params[17] //imdb_id
         );
       }else{
-        homeCtrl.deleteListing(params[1]);
+        homeCtrl.deleteListing(params[1], params[2]);
       }
     }, function () {
       $log.info('Canceled');
@@ -477,7 +518,7 @@ angular.module('EgMovieList.Home', [
   };
   
   homeCtrl.delete = function () {
-    $uibModalInstance.close(['delete', homeCtrl.params.id]);
+    $uibModalInstance.close(['delete', homeCtrl.params.id, homeCtrl.ioPassword]);
   };
 }])
 

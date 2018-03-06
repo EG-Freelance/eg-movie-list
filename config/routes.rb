@@ -9,13 +9,14 @@ Rails.application.routes.draw do
   get '/api/writers' => 'application#writers'
   get '/api/failures' => 'application#failures'
   post '/api/add_listing' => 'application#add_listing'
-  post '/api/edit_listing' => 'application#edit_listing'
+  post '/api/edit_listing/' => 'application#edit_listing'
   post '/api/import_listing' => 'application#import_listing'
   post '/api/add_rating' => 'application#add_rating'
   post '/api/upload_file' => 'application#upload_file'
-  delete '/api/delete_listing/:id' => 'application#delete_listing'
-  delete '/api/delete_failure/:id' => 'application#delete_failure'
-  delete '/api/delete_all_failures' => 'application#delete_all_failures'
+  post '/api/authenticate' => 'application#authenticate'
+  delete '/api/delete_listing/:id/' => 'application#delete_listing'
+  delete '/api/delete_failure/:id/' => 'application#delete_failure'
+  delete '/api/delete_all_failures/' => 'application#delete_all_failures'
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

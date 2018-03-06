@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
-  
+
   # send the user to the angular application by default
   def angular
     render "layouts/application", layout: false
@@ -230,9 +230,18 @@ class ApplicationController < ActionController::Base
     render :json => {'success' => true }
   end
 
+  def authenticate
+    if params['password'] != ENV['IOPASSWORD']
+      head :forbidden
+      return true
+    else
+      render status: 200, json: {'success' => true }
+    end
+  end
+  
   private
   
   def listing_params
-    params.require(:listing).permit(:title, :media_type, :location, :owner, :imdb_rating, :rt_rating, :year, :runtime, :plot, :poster_url, :notes, :imdb_id)
+    params.require(:listing).permit(:title, :media_type, :location, :owner, :imdb_rating, :rt_rating, :year, :runtime, :plot, :poster_url, :notes, :imdb_id, :password)
   end
 end

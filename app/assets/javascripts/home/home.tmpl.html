@@ -93,6 +93,12 @@
     </a>
     Refresh Listings
     <p ng-show="homeCtrl.loading"><i style="color:red">Loading or refreshing listings.  Please wait....</i></p>
+    
+  </div>
+  <div style="width:100%; text-align:center">
+    <md-input-container>
+      <input type="password" ng-model="homeCtrl.ioPassword" placeholder="IO Password">
+    </md-input-container>
   </div>
 
   
@@ -175,7 +181,7 @@
             <td>{{ listing.year }}</td>
             <td>{{ listing.media_type }}</td>
             <td>{{ listing.location }}</td>
-            <td>{{ listing.runtime | number:0 }} <span ng-if="listing.runtime > 0">min</span></td>
+            <td>{{ listing.runtime }}</td>
             <td>{{ listing.imdb_rating | number:1 }}</td>
             <td>{{ listing.rt_rating | number:0 }}</td>
             <td ng-show="homeCtrl.edit == true"><a href ng-click="homeCtrl.updateListing(listing); homeCtrl.open()"><i class="edit-link">Edit</i></a></td>
@@ -196,7 +202,6 @@
   <!--</div>-->
   
   <!--<section ng-show="homeCtrl.password == homeCtrl.password_check">-->
-  
   <hr />
   <section>
     <div class="tabs" style="margin-bottom:20px">
@@ -214,10 +219,12 @@
     	</span>
     </div>
     
+
+    
     <!-- Tab 1 -->
     <div ng-show="homeCtrl.isSelected(1)">
       <p>Note:  Either IMDB ID (recommended) or Search Title (year also recommended for this option) must be provided</p>
-  		<form layout-align='center center' name="listing_import_form" ng-submit="homeCtrl.import_listing(homeCtrl.importListing.imdb_id, homeCtrl.importListing.search_title, homeCtrl.importListing.display_title, homeCtrl.importListing.year, homeCtrl.importListing.media, homeCtrl.importListing.season, homeCtrl.importListing.location, homeCtrl.importListing.owner, homeCtrl.importListing.notes, homeCtrl.importListing.holiday)">
+  		<form layout-align='center center' name="listing_import_form" ng-submit="homeCtrl.import_listing(homeCtrl.importListing.imdb_id, homeCtrl.importListing.search_title, homeCtrl.importListing.display_title, homeCtrl.importListing.year, homeCtrl.importListing.media, homeCtrl.importListing.season, homeCtrl.importListing.location, homeCtrl.importListing.owner, homeCtrl.importListing.notes, homeCtrl.importListing.holiday, homeCtrl.ioPassword)">
         <div layout='column' layout-align='center center' style='width:100%'>
           <md-input-container>
             <input type="text" ng-model="homeCtrl.importListing.imdb_id" placeholder="IMDB ID" ng-required="!homeCtrl.importListing.search_title">
@@ -258,7 +265,7 @@
   	
   	<!-- Tab 2 -->
   	<div ng-show="homeCtrl.isSelected(2)"> 
-  	  <form name="new_listing_form" layout-align="center center" ng-submit="homeCtrl.add_listing(homeCtrl.newListing.title, homeCtrl.newListing.year, homeCtrl.newListing.media_type, homeCtrl.newListing.runtime, homeCtrl.newListing.location, homeCtrl.newListing.owner, homeCtrl.newListing.genres, homeCtrl.newListing.actors, homeCtrl.newListing.directors, homeCtrl.newListing.writers, homeCtrl.newListing.imdb_rating, homeCtrl.newListing.rt_rating, homeCtrl.newListing.notes)">
+  	  <form name="new_listing_form" layout-align="center center" ng-submit="homeCtrl.add_listing(homeCtrl.newListing.title, homeCtrl.newListing.year, homeCtrl.newListing.media_type, homeCtrl.newListing.runtime, homeCtrl.newListing.location, homeCtrl.newListing.owner, homeCtrl.newListing.genres, homeCtrl.newListing.actors, homeCtrl.newListing.directors, homeCtrl.newListing.writers, homeCtrl.newListing.imdb_rating, homeCtrl.newListing.rt_rating, homeCtrl.newListing.notes, homeCtrl.ioPassword)">
         <div layout='column' layout-align="center center">
           <md-input-container>
             <input type="text" ng-model="homeCtrl.newListing.title" placeholder="Title" required>
@@ -315,7 +322,7 @@
           <i ng-show="myForm.file.$error.maxSize">File too large 
             {{errorFile.size / 1000000|number:1}}MB: max 20M</i>
           <br>
-          <md-button ng-style="homeCtrl.httpCall" ng-disabled="!myForm.$valid" ng-click="homeCtrl.uploadFile(homeCtrl.file); homeCtrl.httpResponse('pending')">{{ homeCtrl.httpCallText }}</md-button>
+          <md-button ng-style="homeCtrl.httpCall" ng-disabled="!myForm.$valid" ng-click="homeCtrl.uploadFile(homeCtrl.file, homeCtrl.ioPassword); homeCtrl.httpResponse('pending')">{{ homeCtrl.httpCallText }}</md-button>
           <span class="progress" ng-show="homeCtrl.file.progress >= 0">
             <div style="width:{{homeCtrl.file.progress}}%" 
                 ng-bind="homeCtrl.file.progress + '%'"></div>
@@ -347,7 +354,7 @@
               Year
             </th>
             <th style="width:100px; text-align: center">
-              <a href ng-click="homeCtrl.removeAllFailures()">Remove All</a>
+              <a href ng-click="homeCtrl.removeAllFailures(homeCtrl.ioPassword)">Remove All</a>
             </th>
           </tr>
         </thead>
@@ -355,7 +362,7 @@
           <tr ng-repeat="failure in homeCtrl.failures">
             <td style="text-align:left"><a href ng-click="homeCtrl.createListing(failure.title)"><span class="edit-link">{{ failure.title }}</span></a></td>
             <td>{{ failure.year }}</td>
-            <td><a href ng-click="homeCtrl.removeFailure(failure.id)">Remove</a></td>
+            <td><a href ng-click="homeCtrl.removeFailure(failure.id, homeCtrl.ioPassword)">Remove</a></td>
           </tr>
         </tbody>
       </table>
@@ -425,7 +432,7 @@
       </form>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger pull-left" type="button" ng-really-message="Are you sure you want to delete this entry?" ng-really-click="homeCtrl.delete()">Delete</button>
+      <button class="btn btn-danger pull-left" type="button" ng-really-message="Are you sure you want to delete this entry?" ng-really-click="homeCtrl.delete(homeCtrl.ioPassword)">Delete</button>
       <button ng-disabled="!listing_edit_form.$valid" class="btn btn-primary" type="button" ng-click="homeCtrl.ok()">Submit</button>
       <button class="btn btn-warning" type="button" ng-click="homeCtrl.cancel()">Cancel</button>
     </div>

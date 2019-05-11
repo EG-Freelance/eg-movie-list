@@ -286,7 +286,7 @@ class Listing < ActiveRecord::Base
     # generate and associate peripheral data
     genres = hash["Genre"].split(", ")
     # add holiday genre
-    holidays = holiday.split(/; ?/)
+    holidays = holiday.split(/; ?/) unless holiday.nil?
     if !holidays.blank?
       holidays.each { |h| genres.push(h) }
     end

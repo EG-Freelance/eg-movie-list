@@ -212,12 +212,12 @@ class ApplicationController < ActionController::Base
       row[0].nil? ? season = "" : season = row[0]
       title = row[1]
       year = row[2]
-      owner = row[4]
-      row[5].nil? ? holiday = "" : holiday = row[5]
-      form = row[6]
-      notes = row[7]
-      row[8].nil? ? series = "" : series = row[8]
-      imdb_id = row[9]
+      owner = row[3]
+      row[4].nil? ? holiday = "" : holiday = row[4]
+      form = row[5]
+      notes = row[6]
+      row[7].nil? ? series = "" : series = row[7]
+      imdb_id = row[89]
       
       if season.blank? 
         media = "movie" 

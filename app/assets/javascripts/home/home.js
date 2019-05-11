@@ -6,6 +6,7 @@ angular.module('EgMovieList.Home', [
   'ui.bootstrap',
   'vAccordion',
   'ngFileUpload',
+  'ngFileSaver',
   'ngSanitize',
   'angularUtils.directives.dirPagination'
 ])
@@ -29,7 +30,7 @@ angular.module('EgMovieList.Home', [
   }
 })*/
   
-.controller('HomeCtrl', ['$q', '$uibModal', '$http', '$window', 'listingsFactory', 'genresFactory', 'actorsFactory', 'directorsFactory', 'writersFactory', 'failuresFactory', '$log', '$location', '$state', '$filter', '$timeout', '$document', 'Upload', function($q, $uibModal, $http, $window, listingsFactory, genresFactory, actorsFactory, directorsFactory, writersFactory, failuresFactory, $log, $location, $state, $filter, $timeout, $document, Upload){
+.controller('HomeCtrl', ['$q', '$uibModal', '$http', '$window', 'listingsFactory', 'genresFactory', 'actorsFactory', 'directorsFactory', 'writersFactory', 'failuresFactory', '$log', '$location', '$state', '$filter', '$timeout', '$document', 'Upload', 'FileSaver', 'Blob', function($q, $uibModal, $http, $window, listingsFactory, genresFactory, actorsFactory, directorsFactory, writersFactory, failuresFactory, $log, $location, $state, $filter, $timeout, $document, Upload, FileSaver, Blob){
   var homeCtrl = this;
   homeCtrl.listings = [];
   homeCtrl.add_listing = add_listing;
@@ -64,6 +65,7 @@ angular.module('EgMovieList.Home', [
   homeCtrl.itemsPerPage = 50;
   homeCtrl.rpp = homeCtrl.itemsPerPage;
   homeCtrl.exportListings = exportListings;
+  homeCtrl.exportTemplate = exportTemplate;
 
   function init() {
     homeCtrl.loading = true;
@@ -218,9 +220,22 @@ angular.module('EgMovieList.Home', [
     var fileName = 'Movie Listings ' + today + '.xls'
 
     var blob = new Blob([document.getElementById('exportable').innerHTML], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8"
+      // type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      type: 'application/vnd.ms-excel'
     });
-    saveAs(blob, fileName);
+    FileSaver.saveAs(blob, fileName);
+  };
+  
+  function exportTemplate() {
+    var today = new Date()
+    today = today.getFullYear()+'/'+(today.getMonth() < 10 ? '0' : '') + parseInt(today.getMonth()+1)+'/'+(today.getDate() < 10 ? '0' : '') + today.getDate();
+    var fileName = 'Movie Listings Import Template' + today + '.xls'
+
+    var blob = new Blob([document.getElementById('import-template').innerHTML], {
+      // type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      type: 'application/vnd.ms-excel'
+    });
+    FileSaver.saveAs(blob, fileName);
   };
 
   function browseButton(category, query){

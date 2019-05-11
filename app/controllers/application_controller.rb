@@ -199,6 +199,9 @@ class ApplicationController < ActionController::Base
   end
   
   def upload_file
+    ##### format: #####
+    # header row
+    # season, title, year, owner, holiday, form, notes, series, imdb_id
     file = params["file"]
     spreadsheet = Roo::Excelx.new(file.path)
     

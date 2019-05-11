@@ -21,6 +21,7 @@
 //= require angularUtils-pagination
 //= require v-accordion
 //= require ng-file-upload
+//= require angular-file-saver
 //= require turbolinks
 //= require_tree .
 

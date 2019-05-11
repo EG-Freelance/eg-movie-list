@@ -154,7 +154,11 @@ class Listing < ActiveRecord::Base
     # generate and associate peripheral data
     genres = hash["Genre"].split(", ")
     # add holiday genre
-    genres.push(xl_data["holiday"]) unless xl_data["holiday"].blank?
+    holidays = xl_data["holiday"].split(/; ?/)
+    if !holidays.blank?
+      holidays.each { |h| genres.push(h) }
+    end
+    # genres.push(xl_data["holiday"]) unless xl_data["holiday"].blank?
     directors = hash["Director"].split(", ")
     w_string = hash["Writer"].gsub(/\s?\(.*\)\s?/,"") # need to remove roles from writer names BEFORE splitting (to avoid comma parentheticals)
     writers = w_string.split(", ")
@@ -282,7 +286,11 @@ class Listing < ActiveRecord::Base
     # generate and associate peripheral data
     genres = hash["Genre"].split(", ")
     # add holiday genre
-    genres.push(holiday) unless holiday.blank?
+    holidays = xl_data["holiday"].split(/; ?/)
+    if !holidays.blank?
+      holidays.each { |h| genres.push(h) }
+    end
+    # genres.push(holiday) unless holiday.blank?
     directors = hash["Director"].split(", ")
     writers = hash["Writer"].split(", ")
     writers = writers.each { |w| w.gsub!(/\s?\(.*\)\s?/,"") }.uniq # need to remove roles from writer names

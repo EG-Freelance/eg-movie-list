@@ -62,6 +62,7 @@ angular.module('EgMovieList.Charts', [
 
   function get_trend(series, year, imdb_id) {
     // set url based on params provided
+    var canvas = document.getElementById('chart');
     var base_url = 'https://www.omdbapi.com/?apikey=b03879be&'
     if(imdb_id){
       var url = base_url + 'i=' + encodeURI(imdb_id) + '&season=1';
@@ -77,33 +78,46 @@ angular.module('EgMovieList.Charts', [
     // get info from OMDb API (basic info + S1 data first, then loop to get Sn info)
     $http.get(url)
     .then(function(response){
+      if(response.data.Response == "False"){
+        if (canvas){
+          var ctx = canvas.getContext('2d');
+          ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+        }
+        chartsCtrl.series_list = {}
+        chartsCtrl.chart_title = "Series not found"
+        return false;
+      }
       var seasons = response.data.totalSeasons;
       chartsCtrl.series_list[1] = response.data.Episodes.filter(function(e){
         return e["Released"] != "N/A";
       });
       chartsCtrl.chart_title = response.data.Title
-
-      for(var i = 2; i <= parseInt(seasons); i++){
-        if(imdb_id){
-          var url = base_url + 'i=' + encodeURI(imdb_id) + '&season=' + String(i);
-        }else{
-          var url = base_url + 't=' + encodeURI(series) + '&y=' + year + '&season=' + String(i);
-        }
-        
-        $http.get(url)
-        .then(function(resp){
-          chartsCtrl.series_list[resp.data.Season] = resp.data.Episodes.filter(function(e){
-            return e["Released"] != "N/A";
-          });
-          renders++;
-          
-          // render the chart if the number of seasons pulled is equal to the number of seasons on record
-          if(renders == parseInt(seasons)){
-            organize_chart_data(chartsCtrl.series_list);
+      
+      if(parseInt(seasons) == 1){
+        organize_chart_data(chartsCtrl.series_list);
+      }else{
+        for(var i = 2; i <= parseInt(seasons); i++){
+          if(imdb_id){
+            var url = base_url + 'i=' + encodeURI(imdb_id) + '&season=' + String(i);
+          }else{
+            var url = base_url + 't=' + encodeURI(series) + '&y=' + year + '&season=' + String(i);
           }
-        }, function(data, status) {
-          $log.log(data.error + ' ' + status);
-        })
+          
+          $http.get(url)
+          .then(function(resp){
+            chartsCtrl.series_list[resp.data.Season] = resp.data.Episodes.filter(function(e){
+              return e["Released"] != "N/A";
+            });
+            renders++;
+            
+            // render the chart if the number of seasons pulled is equal to the number of seasons on record
+            if(renders == parseInt(seasons)){
+              organize_chart_data(chartsCtrl.series_list);
+            }
+          }, function(data, status) {
+            $log.log(data.error + ' ' + status);
+          })
+        }
       }
     }, function(data, status) {
       $log.log(data.error + ' ' + status);

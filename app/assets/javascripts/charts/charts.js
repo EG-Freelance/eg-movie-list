@@ -240,6 +240,9 @@ angular.module('EgMovieList.Charts', [
           },
           label: function(tooltipItem){
             return "Score: " + ep_data[tooltipItem.datasetIndex][tooltipItem.index]["imdbRating"];
+          },
+          afterLabel: function(tooltipItem){
+            return "Aired: " + ep_data[tooltipItem.datasetIndex][tooltipItem.index]["Released"];
           }
         }
       },

@@ -244,3 +244,16 @@ span.tabs:nth-child(4) { border-radius: 0px 20px 20px 0px;}
 .rpp{
   max-width:120px;
 }
+/**********************
+* Chart Title Options *
+**********************/
+.chart-title{
+  font-size: 48px;
+  line-height: 50px;
+  font-family: 'Roboto';
+  color: rgba(50,50,50,.8);
+}
+.chart-subtitle{
+  color: rgba(50,50,50,.8);
+  font-size: 12px;
+}

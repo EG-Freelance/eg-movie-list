@@ -1,5 +1,6 @@
 <div style="margin-left: 20px; margin-top: 20px; margin-right: 20px">
   <h1>TV Show Trends</h1>
+  <h5></h5>
   <form name="get_data_form">
     <md-input-container>
       <input type="text" ng-model="chartsCtrl.imdb_id" placeholder="IMDb ID (if no title)" ng-required="!chartsCtrl.series">
@@ -15,9 +16,11 @@
     <br />
   </form>
   <button ng-disabled="!get_data_form.$valid" class="btn btn-primary" type="button" ng-click="chartsCtrl.get_trend(chartsCtrl.series, chartsCtrl.year, chartsCtrl.imdb_id)">Submit</button>
-</div>
 
-<br><br>
-<div style="width: 90%">
-  <canvas height="400" width="900" id="chart" class="chart chart-line" chart-data="chartsCtrl.dataset" chart-labels="chartsCtrl.labels" chart-options="chartsCtrl.options" chart-series="chartsCtrl.series_labels">
+  <br><br>
+  <div style="width: 90%; text-align: center">
+    <div class="chart-title"><b>{{ chartsCtrl.chart_title }}</b></div>
+    <div class="chart-subtitle" ng-show="chartsCtrl.chart_title"><i>(click datapoint to open episode info)</i></div>
+    <canvas height="400" width="900" id="chart" class="chart chart-line" chart-data="chartsCtrl.dataset" chart-labels="chartsCtrl.labels" chart-options="chartsCtrl.options" chart-series="chartsCtrl.series_labels">
+  </div>
 </div>

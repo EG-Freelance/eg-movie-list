@@ -4,6 +4,7 @@ angular.module('EgMovieList', [
   'ngMaterial', // angular material -- done correctly
   'ngAnimate', // angular animations
   'EgMovieList.Home',
+  'EgMovieList.Charts',
   'ui.bootstrap'
 ])
 

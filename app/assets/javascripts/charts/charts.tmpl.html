@@ -1,0 +1,23 @@
+<div style="margin-left: 20px; margin-top: 20px; margin-right: 20px">
+  <h1>TV Show Trends</h1>
+  <form name="get_data_form">
+    <md-input-container>
+      <input type="text" ng-model="chartsCtrl.imdb_id" placeholder="IMDb ID (if no title)" ng-required="!chartsCtrl.series">
+    </md-input-container>
+    OR
+    <br />
+    <md-input-container>
+      <input type="text" ng-model="chartsCtrl.series" placeholder="Show Title (if no IMDb ID)" ng-required="!chartsCtrl.imdb_id">
+    </md-input-container>
+    <md-input-container>
+      <input type="text" ng-model="chartsCtrl.year" placeholder="Year (Optional)">
+    </md-input-container>
+    <br />
+  </form>
+  <button ng-disabled="!get_data_form.$valid" class="btn btn-primary" type="button" ng-click="chartsCtrl.get_trend(chartsCtrl.series, chartsCtrl.year, chartsCtrl.imdb_id)">Submit</button>
+</div>
+
+<br><br>
+<div style="width: 90%">
+  <canvas height="400" width="900" id="chart" class="chart chart-line" chart-data="chartsCtrl.dataset" chart-labels="chartsCtrl.labels" chart-options="chartsCtrl.options" chart-series="chartsCtrl.series_labels">
+</div>

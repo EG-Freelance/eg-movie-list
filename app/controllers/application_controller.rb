@@ -242,6 +242,10 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  def charts
+    render :json => ""
+  end
+  
   private
   
   def listing_params

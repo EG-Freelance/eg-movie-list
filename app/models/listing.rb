@@ -22,7 +22,7 @@ class Listing < ActiveRecord::Base
       # get information from OMDb API
       puts "getting information from OMDb API for #{title} - #{year}..."
       if media == "movie" || media == "series"
-        url = "http://www.omdbapi.com/?apikey=#{ENV['API_KEY']}&#{URI.encode_www_form('t' => search_title) }&#{URI.encode_www_form('y' => year) }&#{URI.encode_www_form('type' => media)}"
+        url = "http://www.omdbapi.com/?apikey=#{ENV['API_KEY']}&#{URI.encode_www_form({ 't' => search_title, 'y' => year, 'type' => media }) }"
       else
         season_data = xl_data["season"].match(/S(\d{2})E(\d{2})/)
         season = season_data[1]

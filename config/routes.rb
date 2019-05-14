@@ -17,6 +17,10 @@ Rails.application.routes.draw do
   delete '/api/delete_listing/:id/' => 'application#delete_listing'
   delete '/api/delete_failure/:id/' => 'application#delete_failure'
   delete '/api/delete_all_failures/' => 'application#delete_all_failures'
+  
+  # make sure that other addresses are routed to the root page
+  match "*path", to: "application#angular", via: :all
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

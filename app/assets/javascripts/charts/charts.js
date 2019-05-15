@@ -193,7 +193,9 @@ angular.module('EgMovieList.Charts', [
   // };
   
   function organize_chart_data(raw){
-    var seasons = Object.keys(raw).sort(function(e){ return parseInt(e) });
+    var seasons = Object.keys(raw).sort(function(e){ parseInt(e) });
+    console.log(seasons)
+    console.log(raw)
     // var data = [];
     var series_labels = [];
     var labels = [];

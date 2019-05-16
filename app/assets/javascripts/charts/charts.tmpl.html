@@ -21,6 +21,6 @@
   <div style="width: 90%; text-align: center">
     <div class="chart-title"><b>{{ chartsCtrl.chart_title }}</b></div>
     <div class="chart-subtitle" ng-show="chartsCtrl.chart_title"><i>(click datapoint to open episode info)</i></div>
-    <canvas height="400" width="900" id="chart" class="chart chart-line" chart-data="chartsCtrl.dataset" chart-labels="chartsCtrl.labels" chart-options="chartsCtrl.options" chart-series="chartsCtrl.series_labels">
+    <canvas height="400" width="900" id="chart" class="chart chart-line" chart-data="chartsCtrl.dataset" chart-labels="chartsCtrl.labels" chart-options="chartsCtrl.options" chart-series="chartsCtrl.series_labels" chart-dataset-override="chartsCtrl.dataset_override">
   </div>
 </div>

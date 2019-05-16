@@ -5,7 +5,6 @@ angular.module('EgMovieList.Charts', [
   'ngMdIcons',
   'ui.bootstrap',
   'chart.js', // angular charts
-  'cabargues.angularSimpleStatistics'
 ])
 
 .config(['$stateProvider', function($stateProvider){
@@ -21,7 +20,7 @@ angular.module('EgMovieList.Charts', [
     })
   }])
   
-.controller('ChartsCtrl', ['$q', '$uibModal', '$http', '$window', '$log', '$location', '$state', '$filter', '$timeout', '$document', 'ss', function($q, $uibModal, $http, $window, $log, $location, $state, $filter, $timeout, $document, ss){
+.controller('ChartsCtrl', ['$q', '$uibModal', '$http', '$window', '$log', '$location', '$state', '$filter', '$timeout', '$document', function($q, $uibModal, $http, $window, $log, $location, $state, $filter, $timeout, $document){
   var chartsCtrl = this;
   chartsCtrl.get_trend = get_trend;
   chartsCtrl.organize_chart_data = organize_chart_data;
@@ -165,30 +164,71 @@ angular.module('EgMovieList.Charts', [
     }
     
     // function to get start and end points for dataset // dataset should be [{x: n, y: n}, {...}]
-    function getBestFit(data){
+    // function getBestFit(data){
+    //   // remove null data
+    //   data = data.filter(function(obj){
+    //     if(!isNaN(obj['y'])){
+    //       return true;
+    //     }
+    //   });
+    //   var xData = data.map(function(v,k){ return v['x'] });
+    //   var yData = data.map(function(v,k){ return v['y'] });
+    //   var pairs = data.map(function(v,k){ return [v['x'], parseFloat(v['y'])] });
+      
+    //   var func = ss.linearRegression(pairs);
+      
+    //   var xMin = ss.min(xData);
+    //   var xMax = ss.max(xData);
+      
+    //   var yLeft = func['b'] + xMin * func['m'];
+    //   var yRight = func['b'] + xMax * func['m'];
+    //   return [{x: xMin, y: yLeft}, {x: xMax, y: yRight}];
+    // }
+    
+    function getBestFit(data) {
       // remove null data
       data = data.filter(function(obj){
         if(!isNaN(obj['y'])){
           return true;
         }
       });
-      // for(var d in data){
-      //   if(isNaN(data[d]['y'])){
-      //     delete data[d];
-      //   }
-      // }
-      console.log(data)
+
       var xData = data.map(function(v,k){ return v['x'] });
-      var yData = data.map(function(v,k){ return v['y'] });
-      var pairs = data.map(function(v,k){ return [v['x'], parseFloat(v['y'])] });
-      
-      var func = ss.linearRegression(pairs);
-      
-      var xMin = ss.min(xData);
-      var xMax = ss.max(xData);
-      
-      var yLeft = func['b'] + xMin * func['m'];
-      var yRight = func['b'] + xMax * func['m'];
+      // var yData = data.map(function(v,k){ return v['y'] });
+
+      var rV = {},
+        N = data.length,
+        sumX = 0,
+        sumY = 0,
+        sumXx = 0,
+        sumYy = 0,
+        sumXy = 0;
+
+      // can't fit with 0 or 1 point
+      if (N < 2) {
+        return rV;
+      }
+
+      for (var i = 0; i < N; i++) {
+        var x = data[i]['x'],
+          y = data[i]['y'];
+        sumX += x;
+        sumY += y;
+        sumXx += (x * x);
+        sumYy += (y * y);
+        sumXy += (x * y);
+      }
+
+      // calc slope and intercept
+      rV['slope'] = ((N * sumXy) - (sumX * sumY)) / (N * sumXx - (sumX * sumX));
+      rV['intercept'] = (sumY - rV['slope'] * sumX) / N;
+
+      var xMin = Math.min(...xData);
+      var xMax = Math.max(...xData);
+
+      var yLeft = rV['intercept'] + xMin * rV['slope'];
+      var yRight = rV['intercept'] + xMax * rV['slope'];
+
       return [{x: xMin, y: yLeft}, {x: xMax, y: yRight}];
     }
     
@@ -282,7 +322,6 @@ angular.module('EgMovieList.Charts', [
         display: true,
         labels: {
           filter: function(legendItem, chartData){
-            // console.log(chartData);
             if(legendItem.text != "trend"){
               return true;
             }

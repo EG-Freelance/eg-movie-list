@@ -19,14 +19,11 @@
 //= require angular-animate
 //= require angular-aria
 //= require angularUtils-pagination
-//= require simple-statistics
-//= require angular-simple-statistics
 //= require v-accordion
 //= require ng-file-upload
 //= require angular-file-saver
 //= require turbolinks
 //= require_tree .
-
 
 $(document).ready(function() {
 

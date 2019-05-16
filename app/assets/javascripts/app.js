@@ -5,7 +5,7 @@ angular.module('EgMovieList', [
   'ngAnimate', // angular animations
   'EgMovieList.Home',
   'EgMovieList.Charts',
-  'ui.bootstrap'
+  'ui.bootstrap',
 ])
 
 .config(['$mdThemingProvider', function($mdThemingProvider) {

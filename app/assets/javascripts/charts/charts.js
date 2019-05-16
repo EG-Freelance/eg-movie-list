@@ -335,7 +335,7 @@ angular.module('EgMovieList.Charts', [
 			  mode: 'single',
         callbacks: {
           title: function(tooltipItem) {
-            if((tooltipItem[0].datasetIndex % 2) == 0){
+            if(tooltipItem[0] != undefined){
               return "Season " + seasons[tooltipItem[0].datasetIndex / 2] + ' Episode ' + ep_data[tooltipItem[0].datasetIndex / 2][tooltipItem[0].index]["Episode"];
             }else{
               return "";

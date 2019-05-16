@@ -1,0 +1,16 @@
+<div ng-controller="HomeCtrl as homeCtrl">
+	<div class="modal-header">
+    <h3>I'm a modal!</h3>
+	</div>
+	<div class="modal-body">
+		<ul>
+			<li ng-repeat="param in homeCtrl.params">
+				{{ param }}
+			</li>
+		</ul>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="$close()">OK</button>
+    <button class="btn btn-warning" ng-click="$dismiss()">Cancel</button>
+  </div>
+</div>

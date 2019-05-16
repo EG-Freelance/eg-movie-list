@@ -1,0 +1,511 @@
+<div>
+  <div style="width:100%; text-align:center">
+    <h1>Available Movies and Shows</h1>
+    <hr>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.titleFilter" placeholder="Filter by Title"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.typeFilter" placeholder="Filter by Type"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.genreFilter" placeholder="Filter by Genre"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.actorFilter" placeholder="Filter by Actor"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.directorFilter" placeholder="Filter by Director"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.writerFilter" placeholder="Filter by Writer"/>
+    </md-input-container>
+    <md-input-container class="filter-search">
+      <input ng-model="homeCtrl.locationFilter" placeholder="Filter by Storage"/>
+    </md-input-container>
+    <hr>
+    
+    <v-accordion class="vAccordion--default">
+  
+      <!-- add expanded attribute to open the section -->
+      <v-pane>
+        <v-pane-header>
+          <b><i>Browse Genres, Actors, Directors, or Writers</i></b>
+        </v-pane-header>
+    
+        <v-pane-content>
+          <v-accordion class="vAccordion--default">
+      
+            <!-- add expanded attribute to open the section -->
+            <v-pane>
+              <v-pane-header>
+                <span class="browse-header"><b>Genres</b></span>
+              </v-pane-header>
+              <v-pane-content style="display: inline-block">
+                <ul>
+                  <span class="browse-items" ng-repeat="genre in homeCtrl.genres" ng-click="homeCtrl.browseButton('genre', genre.name)"><u>{{ genre.name }}</u></span>
+                </ul>
+              </v-pane-content>
+            </v-pane>
+            <v-pane>
+              <v-pane-header>
+                <span class="browse-header"><b>Actors</b></span>
+              </v-pane-header>
+              <v-pane-content style="display: inline-block">
+                <span class="browse-items" ng-repeat="actor in homeCtrl.actors" ng-click="homeCtrl.browseButton('actor', actor.name)"><u>{{ actor.name }}</u></span>
+              </v-pane-content>
+            </v-pane>
+            <v-pane>
+              <v-pane-header>
+                <span class="browse-header"><b>Directors</b></span>
+              </v-pane-header>
+              <v-pane-content style="display: inline-block">
+                <span class="browse-items" ng-repeat="director in homeCtrl.directors" ng-click="homeCtrl.browseButton('director', director.name)"><u>{{ director.name }}</u></span>
+              </v-pane-content>
+            </v-pane>
+            <v-pane>
+              <v-pane-header>
+                <span class="browse-header"><b>Writers</b></span>
+              </v-pane-header>
+              <v-pane-content style="display: inline-block">
+                <span class="browse-items" ng-repeat="writer in homeCtrl.writers" ng-click="homeCtrl.browseButton('writer', writer.name)"><u>{{ writer.name }}</u></span>
+              </v-pane-content>
+            </v-pane>
+          
+          </v-accordion>
+        </v-pane-content>
+      </v-pane>
+    
+    </v-accordion>
+    <!--<pagination boundary-links="true" -->
+    <!--    max-size="10" -->
+    <!--    items-per-page="homeCtrl.itemsPerPage"-->
+    <!--    total-items="homeCtrl.listings.length" -->
+    <!--    ng-model="homeCtrl.currentPage" -->
+    <!--    ng-change="homeCtrl.pageChanged()"></pagination>-->
+    <p id="listings-count">Showing <b>{{ filtered.length }}</b> listing(s) out of <b>{{ homeCtrl.listings.length }}</b></p>
+    <hr>
+    <md-checkbox ng-model="homeCtrl.edit" aria-label="Edit Listings">
+      Edit Listings
+    </md-checkbox>&nbsp;&nbsp;&nbsp;
+    <a href ng-click="homeCtrl.refreshListings()">
+      <md-icon md-font-library="material-icons">refresh</md-icon>
+    </a>
+    Refresh Listings
+    <p ng-show="homeCtrl.loading"><i style="color:red">Loading or refreshing listings.  Please wait....</i></p>
+    
+  </div>
+  <div style="width:100%; text-align:center">
+    <md-input-container>
+      <input type="password" ng-model="homeCtrl.ioPassword" placeholder="IO Password">
+    </md-input-container>
+  </div>
+
+  
+  <section class="mdl-grid" id="listings">
+    <div style="width:100%">
+    <md-input-container class="rpp">
+      <input ng-model="homeCtrl.rpp" placeholder="Results Per Page"/>
+    </md-input-container>
+    <md-button style="margin-bottom:30px; min-width:1%" ng-click="homeCtrl.itemsPerPage = homeCtrl.rpp">
+      <md-icon>send</md-icon>
+    </md-button>
+    <br />
+      <dir-pagination-controls max-size="10" direction-links="true" boundary-links="true" ></dir-pagination-controls>
+      <table class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="listings-table">
+        <thead>
+          <tr style="background-color:#cccccc;">
+            <th style="width:75px"></th>
+            <th style="width:60%; text-align: left" ng-click="homeCtrl.sortFunction('title')">
+              Title
+              <md-icon ng-show="homeCtrl.sort == 'title'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:15%; text-align: left" ng-click="homeCtrl.sortFunction('year')">
+              Year
+              <md-icon ng-show="homeCtrl.sort == 'year'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:15%; text-align: left" ng-click="homeCtrl.sortFunction('media_type')">
+              Type
+              <md-icon ng-show="homeCtrl.sort == 'media_type'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:15%; text-align: left" ng-click="homeCtrl.sortFunction('location')">
+              Storage
+              <md-icon ng-show="homeCtrl.sort == 'location'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:15%; text-align: left" ng-click="homeCtrl.sortFunction('runtime')">
+              Runtime
+              <md-icon ng-show="homeCtrl.sort == 'runtime'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:10%; text-align: left" ng-click="homeCtrl.sortFunction('imdb_rating')">
+              IMDB
+              <md-icon ng-show="homeCtrl.sort == 'imdb_rating'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th style="width:10%; text-align: left" ng-click="homeCtrl.sortFunction('rt_rating')">
+              RT
+              <md-icon ng-show="homeCtrl.sort == 'rt_rating'" md-font-library="material-icons">{{ homeCtrl.icon }}</md-icon>
+            </th>
+            <th ng-show="homeCtrl.edit == true" style="width:10%; text-align: left">
+              <!--Placholder for edit-->
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr dir-paginate="listing in filtered = (homeCtrl.listings | orderBy: homeCtrl.sort : homeCtrl.reverseSort | filter: {title: homeCtrl.titleFilter} | filter: {media_type: homeCtrl.typeFilter} | filter: {genres: homeCtrl.genreFilter} | filter: {actors: homeCtrl.actorFilter} | filter: {directors: homeCtrl.directorFilter} | filter: {writers: homeCtrl.writerFilter} | filter: {location: homeCtrl.locationFilter} | itemsPerPage: homeCtrl.itemsPerPage)">
+            <td style="padding-top:5px; padding-bottom:5px; padding-left: 5px; padding-right: 5px">
+              <img class="img-with-backup" ng-src="{{ listing.poster_url }}" height="75" style="max-width:50px !important" onerror="image_failover(this);">
+              <div class="relative-wrap">
+                <div class="overflow-wrap">
+                  <div class="popover-img">
+                    <img class="img-with-backup" ng-src="{{ listing.poster_url }}" onerror="image_failover(this);">
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <a ng-href="http://www.imdb.com/title/{{ listing.imdb_id }}" target="_blank" >{{ listing.title }}</a>
+              <div class="relative-wrap">
+                <div class="overflow-wrap">
+                  <div class="popover">
+                    <b>Title:</b>  {{ listing.title }} <br />
+                    <b>Genre:</b>  {{ listing.genres }} <br />
+                    <b>Actors:</b>  {{ listing.actors }} <br />
+                    <b>Directors:</b> {{ listing.directors }} <br />
+                    <b>Writers:</b> {{ listing.writers }} <br />
+                    <b>Plot:</b> {{ listing.plot }} <br />
+                    <b>Owner:</b> {{ listing.owner }}  <br />
+                    <b>Notes:</b> {{ listing.notes }}
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td>{{ listing.year }}</td>
+            <td>{{ listing.media_type }}</td>
+            <td>{{ listing.location }}</td>
+            <td>{{ listing.runtime }}</td>
+            <td>{{ listing.imdb_rating | number:1 }}</td>
+            <td>{{ listing.rt_rating | number:0 }}</td>
+            <td ng-show="homeCtrl.edit == true"><a href ng-click="homeCtrl.updateListing(listing); homeCtrl.open()"><i class="edit-link">Edit</i></a></td>
+          </tr>
+        </tbody>
+      </table>
+      <dir-pagination-controls max-size="10" direction-links="true" boundary-links="true" ></dir-pagination-controls>
+    </div>
+  </section>
+  
+  <!--<h3 style="text-align:center">Enter password to add entries</h3>-->
+  
+  <!--<div style="width:100%; text-align:center">-->
+  <!--  <md-input-container style="width:250px">-->
+  <!--    <label>Input password to add listings</label>-->
+  <!--    <input type="password" ng-model="homeCtrl.password" style="margin-bottom:20px">-->
+  <!--  </md-input-container>-->
+  <!--</div>-->
+  
+  <!--<section ng-show="homeCtrl.password == homeCtrl.password_check">-->
+  <hr />
+  <section>
+    <div class="tabs" style="margin-bottom:20px">
+    	<span class="tabs" ng-class="{active:homeCtrl.isSelected(1) }">
+    		<a href ng-click="homeCtrl.selectTab(1)">Single Entry Auto</a>
+    	</span>
+    	<span class="tabs" ng-class="{active:homeCtrl.isSelected(2) }">
+    		<a href ng-click="homeCtrl.selectTab(2)">Single Entry Manual</a>
+    	</span>
+    	<span class="tabs" ng-class="{active:homeCtrl.isSelected(3) }">
+    		<a href ng-click="homeCtrl.selectTab(3)">Excel IO</a>
+    	</span>
+    	<span class="tabs" ng-class="{active:homeCtrl.isSelected(4) }">
+    		<a href ng-click="homeCtrl.selectTab(4)">Import Failures</a>
+    	</span>
+    </div>
+    
+
+    
+    <!-- Tab 1 -->
+    <div ng-show="homeCtrl.isSelected(1)">
+      <p>Note:  Either IMDB ID (recommended) or Search Title (year also recommended for this option) must be provided</p>
+  		<form layout-align='center center' name="listing_import_form" ng-submit="homeCtrl.import_listing(homeCtrl.importListing.imdb_id, homeCtrl.importListing.search_title, homeCtrl.importListing.display_title, homeCtrl.importListing.year, homeCtrl.importListing.media, homeCtrl.importListing.season, homeCtrl.importListing.location, homeCtrl.importListing.owner, homeCtrl.importListing.notes, homeCtrl.importListing.holiday, homeCtrl.ioPassword)">
+        <div layout='column' layout-align='center center' style='width:100%'>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.imdb_id" placeholder="IMDB ID" ng-required="!homeCtrl.importListing.search_title">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.search_title" placeholder="Search Title (IMDB search)" ng-required="!homeCtrl.importListing.imdb_id">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.display_title" placeholder="Display Title (Database display)" required>
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.year" placeholder="Year">
+          </md-input-container>
+          <md-input-container class="select-box">
+          <md-select ng-model="homeCtrl.importListing.media" placeholder="Media Type">
+            <md-option ng-value="opt[1]" ng-repeat="opt in homeCtrl.mediaOpts">{{ opt[0] }}</md-option>
+          </md-select>
+          </md-input-container>
+          <md-input-container ng-show="homeCtrl.importListing.media != 'movie'">
+            <input type="text" ng-model="homeCtrl.importListing.season" placeholder="Season/Episode (e.g. 'S03', 'S01E12', 'Complete')" ng-required="homeCtrl.importListing.media != 'movie'">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.location" placeholder="Storage" required>
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.owner" placeholder="Owner(s)">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.notes" placeholder="Notes">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.importListing.holiday" placeholder="Holiday (e.g. 'Thanksgiving' or 'Christmas, Hanukkah')">
+          </md-input-container>
+          <md-button ng-style="homeCtrl.httpCall" class="md-primary" ng-click="homeCtrl.httpResponse('pending')" ng-disabled="!listing_import_form.$valid" class="md-raised" style="margin-top:15px" type="submit">{{ homeCtrl.httpCallText }}</md-button>
+        </div>
+      </form>
+  	</div> <!-- Tab 1 -->
+  	
+  	<!-- Tab 2 -->
+  	<div ng-show="homeCtrl.isSelected(2)"> 
+  	  <form name="new_listing_form" layout-align="center center" ng-submit="homeCtrl.add_listing(homeCtrl.newListing.title, homeCtrl.newListing.year, homeCtrl.newListing.media_type, homeCtrl.newListing.runtime, homeCtrl.newListing.location, homeCtrl.newListing.owner, homeCtrl.newListing.genres, homeCtrl.newListing.actors, homeCtrl.newListing.directors, homeCtrl.newListing.writers, homeCtrl.newListing.imdb_rating, homeCtrl.newListing.rt_rating, homeCtrl.newListing.notes, homeCtrl.ioPassword)">
+        <div layout='column' layout-align="center center">
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.title" placeholder="Title" required>
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.year" placeholder="Year">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.media_type" placeholder="Media Type (e.g. 'Movie,' 'TV')" required>
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.runtime" placeholder="Runtime">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.location" placeholder="Storage" required>
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.owner" placeholder="Owner">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.genres" placeholder="Genres (incl. holiday)">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.actors" placeholder="Actors">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.directors" placeholder="Directors">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.writers" placeholder="Writers">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.imdb_rating" placeholder="IMDB Rating">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.rt_rating" placeholder="Rotten Tomatoes Rating">
+          </md-input-container>
+          <md-input-container>
+            <input type="text" ng-model="homeCtrl.newListing.notes" placeholder="Notes">
+          </md-input-container>
+          <md-button ng-style="homeCtrl.httpCall" ng-click="homeCtrl.httpResponse('pending')" ng-disabled="!new_listing_form.$valid" class="md-raised" style="margin-top:15px" type="submit">{{homeCtrl.httpCallText}}</md-button>
+        </div>
+      </form>
+  	</div> <!-- Tab 2 -->
+  	
+  	<!-- Tab 3 -->
+  	<div ng-show="homeCtrl.isSelected(3)" style="text-align:center" class="layout-align-center-center layout-column"> 
+  	  <form name="myForm">
+        <fieldset>
+          <legend>Import from Excel</legend>
+          <input type="file" ngf-select ng-model="homeCtrl.file" name="file"    
+                 accept=".xls,.csv,.xlsx" ngf-max-size="20MB" required
+                 ngf-model-invalid="errorFile" id="hidden-file">
+          <i ng-show="myForm.file.$error.maxSize">File too large 
+            {{errorFile.size / 1000000|number:1}}MB: max 20M</i>
+          <br>
+          <md-button ng-style="homeCtrl.httpCall" ng-disabled="!myForm.$valid" ng-click="homeCtrl.uploadFile(homeCtrl.file, homeCtrl.ioPassword); homeCtrl.httpResponse('pending')">{{ homeCtrl.httpCallText }}</md-button>
+          <span class="progress" ng-show="homeCtrl.file.progress >= 0">
+            <div style="width:{{homeCtrl.file.progress}}%" 
+                ng-bind="homeCtrl.file.progress + '%'"></div>
+          </span>
+          <span ng-show="homeCtrl.file.result">Upload Successful</span>
+          <span class="err" ng-show="errorMsg">{{errorMsg}}</span>
+        </fieldset>
+        <br>
+      </form>
+      <fieldset>
+        <legend>Export to Excel</legend>
+        <md-button class="md-primary" ng-click="homeCtrl.exportListings()" class="md-raised" style="margin-top:15px" type="submit">Export</md-button>
+      </fieldset>
+      </form>
+      <fieldset>
+        <legend>Export Excel-Import Template</legend>
+        <md-button class="md-primary" ng-click="homeCtrl.exportTemplate()" class="md-raised" style="margin-top:15px" type="submit">Export</md-button>
+      </fieldset>
+
+
+  	</div> <!-- Tab 3 -->
+  	
+  	<!-- Tab 4 -->
+  	<div ng-show="homeCtrl.isSelected(4)" style="text-align:center" class="layout-align-center-center layout-column"> 
+      <legend>Failed Imports</legend>
+      <p><i>Recommend importing by IMDb ID or adding manually</i></p>
+      <table style="max-width:1000px" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" id="failures-table">
+        <thead>
+          <tr style="background-color:#cccccc;">
+            <th style="min-width:350px; text-align: left">
+              Title
+            </th>
+            <th style="width:50px; text-align: center">
+              Year
+            </th>
+            <th style="width:100px; text-align: center">
+              <a href ng-click="homeCtrl.removeAllFailures(homeCtrl.ioPassword)">Remove All</a>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="failure in homeCtrl.failures">
+            <td style="text-align:left"><a href ng-click="homeCtrl.createListing(failure.title)"><span class="edit-link">{{ failure.title }}</span></a></td>
+            <td>{{ failure.year }}</td>
+            <td><a href ng-click="homeCtrl.removeFailure(failure.id, homeCtrl.ioPassword)">Remove</a></td>
+          </tr>
+        </tbody>
+      </table>
+  	</div> <!-- Tab 4 -->
+  	
+  </section>
+</div>
+
+<!--Modal information for editing entries-->
+<div class="modal-demo">
+  <script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Edit Listing</h3>
+    </div>
+    <div class="modal-body" id="modal-body">
+      <br />
+  		<form name="listing_edit_form">
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.title" placeholder="Title" required>
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.genres" placeholder="Genres">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.actors" placeholder="Actors">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.directors" placeholder="Directors">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.writers" placeholder="Writers">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.media_type" placeholder="Movie/TV/Episode" required>
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.location" placeholder="Storage Type" required>
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.owner" placeholder="Owner(s)">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.imdb_rating" placeholder="IMDb Rating">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.rt_rating" placeholder="Rotten Tomatoes Rating">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.year" placeholder="Year">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.runtime" placeholder="Runtime">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.plot" placeholder="Plot">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.poster_url" placeholder="Poster URL">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.notes" placeholder="Notes">
+        </md-input-container>
+        <md-input-container>
+          <input type="text" ng-model="homeCtrl.params.imdb_id" placeholder="IMDb ID">
+        </md-input-container>
+        <br />
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger pull-left" type="button" ng-really-message="Are you sure you want to delete this entry?" ng-really-click="homeCtrl.delete(homeCtrl.ioPassword)">Delete</button>
+      <button ng-disabled="!listing_edit_form.$valid" class="btn btn-primary" type="button" ng-click="homeCtrl.ok()">Submit</button>
+      <button class="btn btn-warning" type="button" ng-click="homeCtrl.cancel()">Cancel</button>
+    </div>
+  </script>
+ 
+  <div class="modal-parent"></div>
+</div>
+
+<script>
+  function image_failover(img) {
+    img.onerror = function() {
+        img.src = "http://www.lacinefest.org/uploads/2/6/7/4/26743637/no-poster_orig.jpeg";
+    }
+    img.src = img.src.replace('https:', 'http:');
+  }
+</script>
+
+<!-- exportable movie list -->
+<div id="exportable" class="hidden">
+  <table>
+    <tr>
+      <th>Title</th>
+      <th>Year</th>
+      <th>Runtime</th>
+      <th>Type</th>
+      <th>Storage</th>
+      <th>Owner(s)</th>
+      <th>Genre(s)</th>
+      <th>Actor(s)</th>
+      <th>Director(s)</th>
+      <th>Writer(s)</th>
+      <th>IMDB Rating</th>
+      <th>RT Rating</th>
+      <th>Plot</th>
+      <th>Notes</th>
+    </tr>
+    <tr ng-repeat="l in homeCtrl.listings">
+      <td>{{ l.title }}</td>
+      <td>{{ l.year }}</td>
+      <td>{{ l.runtime }}</td>
+      <td>{{ l.media_type }}</td>
+      <td>{{ l.location }}</td>
+      <td>{{ l.owner }}</td>
+      <td>{{ l.genres }}</td>
+      <td>{{ l.actors }}</td>
+      <td>{{ l.directors }}</td>
+      <td>{{ l.writers }}</td>
+      <td>{{ l.imdb_rating }}</td>
+      <td>{{ l.rt_rating }}</td>
+      <td>{{ l.plot }}</td>
+      <td>{{ l.notes }}</td>
+    </tr>
+  </table>
+</div>
+
+<!-- Multi-entry Excel template -->
+<div id="import-template" class="hidden">
+  <table>
+    <tr>
+      <th>Season (S0nE0n, S0n, Complete, or [blank])</th>
+      <th>Title</th>
+      <th>Year</th>
+      <th>Owner</th>
+      <th>Holiday (semicolon separated)</th>
+      <th>Form (storage)</th>
+      <th>Notes</th>
+      <th>Series (e.g. "Batman (Nolan) 01"): [include colon/space]</th>
+      <th>imdb_id</th>
+    </tr>
+  </table>
+</div>

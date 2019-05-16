@@ -4,7 +4,7 @@ angular.module('EgMovieList.Charts', [
   'ngMaterial',
   'ngMdIcons',
   'ui.bootstrap',
-  'chart.js', // angular charts
+  'chart.js' // angular charts
 ])
 
 .config(['$stateProvider', function($stateProvider){

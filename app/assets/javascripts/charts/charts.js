@@ -400,7 +400,7 @@ angular.module('EgMovieList.Charts', [
         var el = el[0];
         // if not clicking on an element
         if(!el || (el._datasetIndex % 2) == 1){ return; }
-        var ep_url = ep_data[el._datasetIndex][el._index]["imdbID"]
+        var ep_url = ep_data[el._datasetIndex / 2][el._index]["imdbID"]
         $window.open(link_base + ep_url, '_blank');
       }
     };

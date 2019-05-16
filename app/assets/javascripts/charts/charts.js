@@ -20,7 +20,7 @@ angular.module('EgMovieList.Charts', [
     })
   }])
   
-.controller('ChartsCtrl', ['$q', '$uibModal', '$http', '$window', '$log', '$location', '$state', '$filter', '$timeout', '$document', function($q, $uibModal, $http, $window, $log, $location, $state, $filter, $timeout, $document){
+.controller('ChartsCtrl', ['$q', '$uibModal', '$http', '$window', '$log', '$location', '$state', '$filter', '$timeout', '$document', '$scope', function($q, $uibModal, $http, $window, $log, $location, $state, $filter, $timeout, $document, $scope){
   var chartsCtrl = this;
   chartsCtrl.get_trend = get_trend;
   chartsCtrl.organize_chart_data = organize_chart_data;
@@ -28,6 +28,12 @@ angular.module('EgMovieList.Charts', [
   chartsCtrl.year = "";
   chartsCtrl.imdb_id = "";
   chartsCtrl.series_list = {};
+  chartsCtrl.trends = true;
+  chartsCtrl.episode_data = true;
+  chartsCtrl.set_options = set_options;
+  chartsCtrl.set_dataset_override = set_dataset_override;
+  chartsCtrl.prevent_empty_switch = prevent_empty_switch;
+  chartsCtrl.myCharts = {};
   
   function init() {
   } // end of init
@@ -38,28 +44,16 @@ angular.module('EgMovieList.Charts', [
   *  Private functions *
   * *******************/
   
-  function httpResponse(status){
-    var buttonColor;
-    var buttonText;
-    if(status == "success"){
-      buttonColor = "lightgreen";
-      buttonText = "SUCCESS!";
-    }else if(status == "pending"){
-      buttonColor = "yellow";
-      buttonText = "PENDING...";
-    }else if(status == "failure"){
-      buttonColor = "red";
-      buttonText = "FAILURE";
-    }else{
-      buttonColor = homeCtrl.defaultBgColor;
-      buttonText = "Submit"
-    }
-    chartsCtrl.httpCallText = buttonText;
-    chartsCtrl.httpCall = {
-      'background-color': buttonColor
+  function prevent_empty_switch(hide){
+    if(!chartsCtrl.trends && !chartsCtrl.episode_data){
+      if(hide == 'trends'){
+        chartsCtrl.episode_data = !chartsCtrl.episode_data;
+      }else{
+        chartsCtrl.trends = !chartsCtrl.trends;
+      }
     }
   }
-
+  
   function get_trend(series, year, imdb_id) {
     // set url based on params provided
     var canvas = document.getElementById('chart');
@@ -124,6 +118,196 @@ angular.module('EgMovieList.Charts', [
     })
   }
   
+  function set_options(opts){
+    var seasons = opts['seasons'];
+    var ep_data = opts['ep_data'];
+    var label_store = opts['label_store'];
+    // seasons, ep_data, label_store
+    var link_base = "https://www.imdb.com/title/";
+    
+    chartsCtrl.options = {
+      elements: {
+        line: {
+          fill: false,
+        }
+      },
+      legend: {
+        display: true,
+        labels: {
+          generateLabels: function(chart){
+            var theHelp = Chart.helpers;
+            var data = chart.data;
+            if (data.labels.length && data.datasets.length) {
+              return data.datasets.map(function(dataset, i) {
+                var meta = chart.getDatasetMeta(i);
+                var ds = data.datasets[i];
+                var arc = meta.data[i];
+                var custom = arc && arc.custom || {};
+                var getValueAtIndexOrDefault = theHelp.getValueAtIndexOrDefault;
+                var arcOpts = chart.options.elements.arc;
+                var fill = custom.backgroundColor ? custom.backgroundColor : getValueAtIndexOrDefault(ds.backgroundColor, i, arcOpts.backgroundColor);
+                var stroke = custom.borderColor ? custom.borderColor : getValueAtIndexOrDefault(ds.borderColor, i, arcOpts.borderColor);
+                var bw = custom.borderWidth ? custom.borderWidth : getValueAtIndexOrDefault(ds.borderWidth, i, arcOpts.borderWidth);
+                return {
+                  // And finally : 
+                  text: dataset.label,
+                  fillStyle: fill,
+                  strokeStyle: stroke,
+                  lineWidth: bw,
+                  hidden: chart.getDatasetMeta(i).hidden,
+                  datasetIndex: i
+                };
+              });
+            }
+            return [];
+          },
+          filter: function(legendItem, chartData){
+            if(legendItem.text != "trend"){
+              return true;
+            }
+          }
+        },
+        onClick: function(e, legendItem){
+          var index = legendItem.datasetIndex;
+          var ci = this.chart;
+          // get dataset
+          var meta = ci.getDatasetMeta(index);
+          // get associated trend dataset
+          var metaTrend = ci.getDatasetMeta(index + 1);
+          
+          // hide/unhide dataset
+          if(chartsCtrl.episode_data){
+            meta.hidden = meta.hidden === null ? !ci.data.datasets[index].hidden : null;
+          }else{
+            meta.hidden = true;
+          }
+          // hide/unhide associated trend dataset
+          if(chartsCtrl.trends){
+            metaTrend.hidden = metaTrend.hidden === null ? !ci.data.datasets[index + 1].hidden : null;
+          }else{
+            metaTrend.hidden = true;
+          }
+          
+          ci.update();
+        },
+      },
+      hover: {
+        mode: 'single'
+      },
+			tooltips: {
+			  mode: 'single',
+        callbacks: {
+          title: function(tooltipItem) {
+            if(tooltipItem[0] != undefined){
+              return "Season " + seasons[tooltipItem[0].datasetIndex / 2] + ' Episode ' + ep_data[tooltipItem[0].datasetIndex / 2][tooltipItem[0].index]["Episode"];
+            }else{
+              return "";
+            }
+          },
+          beforeLabel: function(tooltipItem){
+            if((tooltipItem.datasetIndex % 2) == 0){
+              return "Title: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["Title"];
+            }else{
+              return "";
+            }
+          },
+          label: function(tooltipItem){
+            if((tooltipItem.datasetIndex % 2) == 0){
+              return "Score: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["imdbRating"];
+            }else{
+              return "";
+            }
+          },
+          afterLabel: function(tooltipItem){
+            if((tooltipItem.datasetIndex % 2) == 0){
+              return "Aired: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["Released"];
+            }else{
+              return "";
+            }
+          }
+        },
+        filter: function(tooltipItem, data){
+          if((tooltipItem.datasetIndex % 2) == 0){
+            return true;
+          }
+        }
+      },
+      scales: { 
+        xAxes: [{ 
+          type: 'linear', 
+          labels: chartsCtrl.labels,
+          position: 'bottom',
+          ticks: {
+            autoSkip: true,
+            autoSkipPadding: 0,
+            maxRotation: 75,
+            minRotation: 25,
+            stepSize: 1,
+            userCallback: function(label, index, labels){
+              return label_store[label];
+            }
+          }
+        }],
+        yAxes: [{
+          scaleLabel: {
+            display: true,
+            labelString: "IMDb Rating"
+          },
+          ticks: {
+            min: 0,
+            max: 10
+          }
+        }]
+      },
+      onClick: function(ev, el){
+        var el = el[0];
+        // if not clicking on an element
+        if(!el || (el._datasetIndex % 2) == 1){ return; }
+        var ep_url = ep_data[el._datasetIndex / 2][el._index]["imdbID"];
+        $window.open(link_base + ep_url, '_blank');
+      }
+    };
+  }
+  
+  function set_dataset_override(opts){
+    // ignore if opts isn't set yet
+    if(opts == null){
+      return true;
+    }
+    var series_labels = opts['series_labels'];
+    var colors = opts['colors'];
+    
+    chartsCtrl.dataset_override = [];
+
+    series_labels.forEach(function(s){
+      chartsCtrl.dataset_override.push(
+        {
+          label: s,
+          borderWidth: 2,
+          type: "line",
+          borderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          backgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.3"),
+          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          hidden: !chartsCtrl.episode_data
+        },{
+          label: "trend",
+          borderWidth: 1,
+          type: 'line',
+          borderDash: [10,5],
+          borderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          backgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.3"),
+          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          hidden: !chartsCtrl.trends
+        });
+    });
+  }
+
   function organize_chart_data(raw){
     // function to generate static random color scheme
     function getColors(n){
@@ -162,29 +346,7 @@ angular.module('EgMovieList.Charts', [
 
       return colors.sort(function(){ return Math.random() - 0.5 });
     }
-    
-    // function to get start and end points for dataset // dataset should be [{x: n, y: n}, {...}]
-    // function getBestFit(data){
-    //   // remove null data
-    //   data = data.filter(function(obj){
-    //     if(!isNaN(obj['y'])){
-    //       return true;
-    //     }
-    //   });
-    //   var xData = data.map(function(v,k){ return v['x'] });
-    //   var yData = data.map(function(v,k){ return v['y'] });
-    //   var pairs = data.map(function(v,k){ return [v['x'], parseFloat(v['y'])] });
-      
-    //   var func = ss.linearRegression(pairs);
-      
-    //   var xMin = ss.min(xData);
-    //   var xMax = ss.max(xData);
-      
-    //   var yLeft = func['b'] + xMin * func['m'];
-    //   var yRight = func['b'] + xMax * func['m'];
-    //   return [{x: xMin, y: yLeft}, {x: xMax, y: yRight}];
-    // }
-    
+
     function getBestFit(data) {
       // remove null data
       data = data.filter(function(obj){
@@ -280,129 +442,10 @@ angular.module('EgMovieList.Charts', [
     chartsCtrl.dataset = datasets;
     chartsCtrl.labels = labels;
     chartsCtrl.series_labels = series_labels;
-    
-    var link_base = "https://www.imdb.com/title/"
-
-    chartsCtrl.dataset_override = [];
   
-    // set all data and trendlines
-    series_labels.forEach(function(s){
-      chartsCtrl.dataset_override.push(
-        {
-          label: s,
-          borderWidth: 2,
-          type: "line",
-          borderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          backgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.3"),
-          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8")
-        },{
-          label: "trend",
-          borderWidth: 1,
-          type: 'line',
-          borderDash: [10,5],
-          borderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          backgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.3"),
-          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8")
-        });
-    });
-
-    chartsCtrl.options = { 
-      elements: {
-        line: {
-          fill: false,
-        }
-      },
-      legend: {
-        display: true,
-        labels: {
-          filter: function(legendItem, chartData){
-            if(legendItem.text != "trend"){
-              return true;
-            }
-          }
-        }
-      },
-      hover: {
-        mode: 'single'
-      },
-			tooltips: {
-			  mode: 'single',
-        callbacks: {
-          title: function(tooltipItem) {
-            if(tooltipItem[0] != undefined){
-              return "Season " + seasons[tooltipItem[0].datasetIndex / 2] + ' Episode ' + ep_data[tooltipItem[0].datasetIndex / 2][tooltipItem[0].index]["Episode"];
-            }else{
-              return "";
-            }
-          },
-          beforeLabel: function(tooltipItem){
-            if((tooltipItem.datasetIndex % 2) == 0){
-              return "Title: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["Title"];
-            }else{
-              return "";
-            }
-          },
-          label: function(tooltipItem){
-            if((tooltipItem.datasetIndex % 2) == 0){
-              return "Score: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["imdbRating"];
-            }else{
-              return "";
-            }
-          },
-          afterLabel: function(tooltipItem){
-            if((tooltipItem.datasetIndex % 2) == 0){
-              return "Aired: " + ep_data[tooltipItem.datasetIndex / 2][tooltipItem.index]["Released"];
-            }else{
-              return "";
-            }
-          }
-        },
-        filter: function(tooltipItem, data){
-          if((tooltipItem.datasetIndex % 2) == 0){
-            return true;
-          }
-        }
-      },
-      scales: { 
-        xAxes: [{ 
-          type: 'linear', 
-          labels: chartsCtrl.labels,
-          position: 'bottom',
-          ticks: {
-            autoSkip: true,
-            autoSkipPadding: 15,
-            maxRotation: 75,
-            minRotation: 25,
-            stepSize: 1,
-            userCallback: function(label, index, labels){
-              return label_store[label];
-            }
-          }
-        }],
-        yAxes: [{
-          scaleLabel: {
-            display: true,
-            labelString: "IMDb Rating"
-          },
-          ticks: {
-            min: 0,
-            max: 10
-          }
-        }]
-      },
-      onClick: function(ev, el){
-        var el = el[0];
-        // if not clicking on an element
-        if(!el || (el._datasetIndex % 2) == 1){ return; }
-        var ep_url = ep_data[el._datasetIndex / 2][el._index]["imdbID"]
-        $window.open(link_base + ep_url, '_blank');
-      }
-    };
+    chartsCtrl.options_object = { seasons: seasons, ep_data: ep_data, label_store: label_store, series_labels: series_labels, colors: colors };
+    chartsCtrl.set_options(chartsCtrl.options_object)    ;
+    chartsCtrl.set_dataset_override(chartsCtrl.options_object);
+    
   }
 }]);

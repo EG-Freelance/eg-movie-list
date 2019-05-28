@@ -311,13 +311,16 @@ class Listing < ActiveRecord::Base
   def self.clean_posters
     url = "http://www.omdbapi.com/?apikey=#{ENV['API_KEY']}&i="
     Listing.where.not(imdb_id: nil).each do |l|
-      response = Curl.get(l.poster_url)
-      if response.body.match("404 Not Found")
-        if l.imdb_id.nil?
-          next
-        end
+      puts "#{l.title}..."
+      if l.poster_url == "N/A"
         response = Curl.get(url + l.imdb_id)
         l.update(poster_url: JSON.parse(response.body)["Poster"])
+      else
+        response = Curl.get(l.poster_url)
+        if response.body.match("404 Not Found") || l.poster_url == "https://images-na.ssl-images-amazon.com/images/M/MV5BZDU5MjY1NzItMThjOC00ZTBmLWJmOTMtMTUxNGY3YTM5NGQyXkEyXkFqcGdeQXVyNTAyODkwOQ@@._V1_SX300.jpg"
+          response = Curl.get(url + l.imdb_id)
+          l.update(poster_url: JSON.parse(response.body)["Poster"])
+        end
       end
     end
   end

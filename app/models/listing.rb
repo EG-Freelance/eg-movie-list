@@ -313,6 +313,9 @@ class Listing < ActiveRecord::Base
     Listing.where.not(imdb_id: nil).each do |l|
       response = Curl.get(l.poster_url)
       if response.body.match("404 Not Found")
+        if l.imdb_id.nil?
+          next
+        end
         response = Curl.get(url + l.imdb_id)
         l.update(poster_url: JSON.parse(response.body)["Poster"])
       end

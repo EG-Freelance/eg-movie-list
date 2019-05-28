@@ -1,3 +1,5 @@
+@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
+
 /* line 1, /home/ubuntu/workspace/eg-movie-list/app/assets/stylesheets/basic_html.css.scss */
 a {
   color: #000 !important;
@@ -6,7 +8,6 @@ a {
 a:hover {
   color: #fc8 !important;
 }
-@import url("https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css");
 /* line 3, /home/ubuntu/workspace/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
 .relative-wrap {
   /*relative on second parent*/

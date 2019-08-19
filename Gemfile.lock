@@ -105,7 +105,7 @@ GEM
     nokogiri (1.9.1)
       mini_portile2 (~> 2.4.0)
     ntlm-http (0.1.1)
-    pg (1.1.4)
+    pg (0.21.0)
     rack (1.6.11)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -217,7 +217,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   mechanize
-  pg
+  pg (~> 0.18)
   rails (= 4.2.5)
   rails_12factor
   responders

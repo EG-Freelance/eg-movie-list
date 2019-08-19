@@ -11,7 +11,7 @@ end
 
 group :production do
   # Use postgresql as the database for Active Record
-  gem 'pg'
+  gem 'pg', '~> 0.18'
   gem 'thin'
   gem 'rails_12factor'
 end

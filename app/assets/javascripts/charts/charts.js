@@ -34,6 +34,8 @@ angular.module('EgMovieList.Charts', [
   chartsCtrl.set_dataset_override = set_dataset_override;
   chartsCtrl.prevent_empty_switch = prevent_empty_switch;
   chartsCtrl.myCharts = {};
+  chartsCtrl.loading = false;
+  chartsCtrl.showCanvas = false;
   
   function init() {
   } // end of init
@@ -54,6 +56,7 @@ angular.module('EgMovieList.Charts', [
     }
   }
   
+  // get trends using OMDb API (has gaps in data)
   // function get_trend(series, year, imdb_id) {
   //   // set url based on params provided
   //   var canvas = document.getElementById('chart');
@@ -122,12 +125,21 @@ angular.module('EgMovieList.Charts', [
   function get_trend(series, year, imdb_id) {
     // set url based on params provided
     var canvas = document.getElementById('chart');
+    chartsCtrl.loading = true;
+    chartsCtrl.showCanvas = false;
+    if(canvas){
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+    }
+
     var base_url = 'https://www.omdbapi.com/?apikey=b03879be&'
     if(!imdb_id){
       var url = base_url + 't=' + encodeURI(series) + '&y=' + year;
       $http.get(url)
       .then(function(response){
         if(response.data.Response == "False"){
+          chartsCtrl.loading = false;
+          chartsCtrl.showCanvas = false;
           if(canvas){
             var ctx = canvas.getContext('2d');
             ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
@@ -484,5 +496,7 @@ angular.module('EgMovieList.Charts', [
     chartsCtrl.options_object = { seasons: seasons, ep_data: ep_data, label_store: label_store, series_labels: series_labels, colors: colors };
     chartsCtrl.set_options(chartsCtrl.options_object)    ;
     chartsCtrl.set_dataset_override(chartsCtrl.options_object);   
+    chartsCtrl.loading = false;
+    chartsCtrl.showCanvas = true;
   }
 }]);

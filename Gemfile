@@ -6,7 +6,7 @@ gem 'rails', '4.2.5'
 
 group :development, :test do
   # Use sqlite3 as the database for Active Record
-  gem 'sqlite3'
+  gem 'sqlite3', '1.3.13'
 end
 
 group :production do
@@ -46,6 +46,9 @@ gem 'curb'
 gem 'roo'
 gem 'roo-xls'
 gem 'spreadsheet'
+
+# use Mechanize to get all TV episode ratings associated with show
+gem 'mechanize'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

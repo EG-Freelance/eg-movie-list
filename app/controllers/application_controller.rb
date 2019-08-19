@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :null_session
 
+  include GetData
+
   # send the user to the angular application by default
   def angular
     render "layouts/application", layout: false
@@ -242,10 +244,18 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def charts
-    render :json => ""
+  # def charts
+  #   puts "====="
+  #   render :json => "abc"
+  # end
+
+  def get_episode_data
+    puts "====abc"
+    data_hash = get_episode_info(params['imdb_id'])
+
+    render :json => data_hash
   end
-  
+
   private
   
   def listing_params

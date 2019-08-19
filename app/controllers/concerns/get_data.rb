@@ -14,9 +14,15 @@ module GetData
         ep_data['ep_number'] = info.css('meta').attr('content').value
         ep_data['title'] = info.css('strong').text
         ep_data['imdb_id'] = info.css('strong').css('a').attr('href').value.match(/tt\d{1,10}/)[0]
-        air_date_raw = info.css('.airdate')[0].text.match(/\d{1,2}\s[A-Za-z]{3}\.?\s\d{4}/)[0].gsub(".", "")
+        air_date_reg = info.css('.airdate')[0].text.match(/\d{1,2}\s[A-Za-z]{3}\.?\s\d{4}/)
+        if air_date_reg.nil?
+          # break if no date is listed
+          return "break"
+        end
+        air_date_raw = air_date_reg[0].gsub(".", "")
         air_date = DateTime.strptime(air_date_raw, "%d %b %Y").strftime("%F")
         if air_date > Date.today.strftime("%F")
+          # break if date is in the future
           return "break"
         end
         ep_data['air_date'] = air_date

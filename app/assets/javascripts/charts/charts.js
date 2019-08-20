@@ -347,12 +347,12 @@ angular.module('EgMovieList.Charts', [
           borderWidth: 1,
           type: 'line',
           borderDash: [10,5],
-          borderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          borderColor: chartsCtrl.episode_data ? colors[series_labels.indexOf(s)].replace("opac", "0.4"): colors[series_labels.indexOf(s)].replace("opac", "0.8"), // light trendlines unless only trendlines are being shown
           backgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.3"),
-          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
-          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.8"),
+          pointBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.5"),
+          pointBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.2"),
+          pointHoverBorderColor: colors[series_labels.indexOf(s)].replace("opac", "0.5"),
+          pointHoverBackgroundColor: colors[series_labels.indexOf(s)].replace("opac", "0.2"),
           hidden: !chartsCtrl.trends
         });
     });

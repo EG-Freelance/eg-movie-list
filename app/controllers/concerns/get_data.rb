@@ -5,7 +5,9 @@ module GetData
 	def get_episode_info(imdb_id)
     def episode_data(data)
       output = []
-      season = data.css('#episode_top').text.match(/Season\p{Zs}(.*)/)[1]
+      season_base = data.css('#episode_top').text.match(/Season\p{Zs}(.*)/)
+      return "invalid season" if season_base.nil? # skip if season doesn't parse correctly
+      season = season_base[1]
       episodes = data.css('.list_item')
       episodes.each do |ep|
         info = ep.css('.info')
@@ -54,6 +56,8 @@ module GetData
       ep_data = episode_data(response)
       if ep_data == "break"
         break
+      elsif ep_data == "invalid season"
+        next
       else
         output[season] = ep_data.map { |ep| {"Title" => ep["title"], "Released" => ep["air_date"], "Episode" => ep["ep_number"], "imdbRating" => ep["rating"], "imdbId" => ep["imdb_id"]} }
       end

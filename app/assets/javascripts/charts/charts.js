@@ -150,6 +150,7 @@ angular.module('EgMovieList.Charts', [
         }
         var imdb_id = response.data.imdbID;
         chartsCtrl.chart_title = response.data.Title;
+        chartsCtrl.watch_link = "https://www.justwatch.com/us/search?q=" + encodeURI(chartsCtrl.chart_title);
         // console.log("aaa" + imdb_id);
         episodesFactory.getEpisodes(imdb_id)
         .then(function(response){
@@ -158,9 +159,26 @@ angular.module('EgMovieList.Charts', [
           organize_chart_data(chartsCtrl.series_list);
 
         }, function(data, status) {
+          chartsCtrl.loading = false;
+          chartsCtrl.showCanvas = false;
+          if(canvas){
+            var ctx = canvas.getContext('2d');
+            ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+          }
+          chartsCtrl.series_list = {};
+          chartsCtrl.chart_title = "Missing episode data";
+
           $log.log(data.error + ' ' + status);
         });
       }, function(data, status) {
+        chartsCtrl.loading = false;
+        chartsCtrl.showCanvas = false;
+        if(canvas){
+          var ctx = canvas.getContext('2d');
+          ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+        }
+        chartsCtrl.series_list = {};
+        chartsCtrl.chart_title = "Series not found";
         $log.log(data.error + ' ' + status);
       });
     }

@@ -63,8 +63,6 @@ module GetData
       end
     end
 
-    puts "====#{output}"
-
     return output
 	end
 end

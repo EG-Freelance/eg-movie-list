@@ -1,0 +1,484 @@
+/* line 1, /home/erik/code/eg-movie-list/app/assets/stylesheets/basic_html.css.scss */
+a {
+  color: #000 !important;
+}
+/* line 4, /home/erik/code/eg-movie-list/app/assets/stylesheets/basic_html.css.scss */
+a:hover {
+  color: #fc8 !important;
+}
+/* line 1, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.relative-wrap {
+  /*relative on second parent*/
+  position: relative;
+}
+
+/* line 6, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.overflow-wrap {
+  /*no relative on immediate parent*/
+}
+
+/* line 9, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.popover-txt {
+  width: 80%;
+  margin-left: 25%;
+  padding-left: 15px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 15px;
+  position: absolute;
+  top: -50px;
+  z-index: 1000;
+  opacity: 0.7;
+  background-color: #444444;
+  color: white;
+  display: none;
+  white-space: normal;
+  pointer-events: none;
+  border-radius: 5px;
+  border: 2px solid red;
+  box-shadow: 5px 5px 1px black;
+  max-width: 1000px !important;
+}
+
+/* line 30, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.popover-img {
+  width: 350px;
+  padding-left: 25px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-right: 25px;
+  position: absolute;
+  top: -250px;
+  z-index: 1000;
+  opacity: 1.0;
+  background-color: #cccccc;
+  color: white;
+  display: none;
+  white-space: normal;
+  pointer-events: none;
+  border-radius: 5px;
+  border: 2px solid #888888;
+  box-shadow: 2px 2px 1px black;
+  max-width: 1000px !important;
+}
+
+/* line 51, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.edit-link {
+  color: blue;
+}
+
+/* line 54, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.edit-link:hover {
+  color: lightblue;
+}
+
+/******************/
+/* Pagination CSS */
+/******************/
+/* line 61, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination {
+  display: inline-block;
+  padding-left: 0;
+  margin: 20px 0;
+  border-radius: 4px;
+}
+
+/* line 67, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > li {
+  display: inline;
+}
+
+/* line 70, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > li > a,
+.pagination > li > span {
+  position: relative;
+  float: left;
+  padding: 6px 12px;
+  margin-left: -1px;
+  line-height: 1.42857143;
+  color: #428bca;
+  text-decoration: none;
+  background-color: #fff;
+  border: 1px solid #ddd;
+}
+
+/* line 82, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > li:first-child > a,
+.pagination > li:first-child > span {
+  margin-left: 0;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+/* line 88, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > li:last-child > a,
+.pagination > li:last-child > span {
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+}
+
+/* line 93, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > li > a:hover,
+.pagination > li > span:hover,
+.pagination > li > a:focus,
+.pagination > li > span:focus {
+  color: #2a6496;
+  background-color: #eee;
+  border-color: #ddd;
+}
+
+/* line 101, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > .active > a,
+.pagination > .active > span,
+.pagination > .active > a:hover,
+.pagination > .active > span:hover,
+.pagination > .active > a:focus,
+.pagination > .active > span:focus {
+  z-index: 2;
+  color: #fff;
+  cursor: default;
+  background-color: #428bca;
+  border-color: #428bca;
+}
+
+/* line 113, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination > .disabled > span,
+.pagination > .disabled > span:hover,
+.pagination > .disabled > span:focus,
+.pagination > .disabled > a,
+.pagination > .disabled > a:hover,
+.pagination > .disabled > a:focus {
+  color: #777;
+  cursor: not-allowed;
+  background-color: #fff;
+  border-color: #ddd;
+}
+
+/* line 124, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-lg > li > a,
+.pagination-lg > li > span {
+  padding: 10px 16px;
+  font-size: 18px;
+}
+
+/* line 129, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-lg > li:first-child > a,
+.pagination-lg > li:first-child > span {
+  border-top-left-radius: 6px;
+  border-bottom-left-radius: 6px;
+}
+
+/* line 134, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-lg > li:last-child > a,
+.pagination-lg > li:last-child > span {
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+/* line 139, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-sm > li > a,
+.pagination-sm > li > span {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
+/* line 144, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-sm > li:first-child > a,
+.pagination-sm > li:first-child > span {
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+/* line 149, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.pagination-sm > li:last-child > a,
+.pagination-sm > li:last-child > span {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+/**********************/
+/* End Pagination CSS */
+/**********************/
+/**************/
+/* Browse CSS */
+/**************/
+/* line 162, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.browse-items {
+  width: 200px;
+  padding-right: 25px;
+  color: #3366BB;
+  cursor: pointer;
+  list-style-type: none;
+  float: left;
+  text-align: left;
+}
+
+/* line 172, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.browse-header {
+  font-size: 20px;
+}
+
+/******************/
+/* End Browse CSS */
+/******************/
+/************/
+/* Tabs CSS */
+/************/
+/* line 184, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+section {
+  text-align: center;
+}
+
+/* line 187, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+div.tabs {
+  text-align: center;
+  padding: 7px 11px;
+  background-color: #f8f8f8;
+}
+
+/* line 192, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+span.tabs {
+  border-radius: 0px;
+  border: solid 1px #505050;
+  background-color: #c8c8c8;
+  padding: 10px 19px;
+  margin: 5px 1px 5px 1px;
+  color: black;
+}
+
+/* line 200, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+span.tabs:hover, span.tabs:hover a {
+  background-color: #5ac85a !important;
+  color: white;
+}
+
+/* line 204, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+span.tabs a {
+  text-decoration: none;
+  color: white;
+  font-size: 21px;
+  font-style: italic;
+  text-shadow: 1px 0px 3px #9d9d9d;
+}
+
+/* line 211, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+span.tabs:nth-child(1) {
+  border-radius: 20px 0px 0px 20px;
+  margin-left: 1px;
+}
+
+/* line 212, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+span.tabs:nth-child(4) {
+  border-radius: 0px 20px 20px 0px;
+}
+
+/* line 213, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.active {
+  background-color: #06b306 !important;
+}
+
+/****************/
+/* End Tabs CSS */
+/****************/
+/* line 221, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.md-icon-float {
+  margin: 0px 0px 0px 0px !important;
+  width: 500px !important;
+}
+
+/* line 226, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.md-input-container {
+  width: 500px !important;
+}
+
+/* line 230, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.select-box {
+  margin-top: 0px !important;
+  margin-bottom: 24px !important;
+  width: 500px !important;
+}
+
+/****************
+* Filter Inputs *
+****************/
+/* line 239, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.filter-search {
+  max-width: 150px;
+}
+
+/* line 242, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.rpp {
+  max-width: 120px;
+}
+
+/**********************
+* Chart Title Options *
+**********************/
+/* line 248, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.chart-title {
+  font-size: 48px;
+  line-height: 50px;
+  font-family: 'Roboto';
+  color: rgba(50, 50, 50, 0.8);
+}
+
+/* line 254, /home/erik/code/eg-movie-list/app/assets/stylesheets/custom_styling.css.scss */
+.chart-subtitle {
+  color: rgba(50, 50, 50, 0.8);
+  font-size: 12px;
+}
+/* line 1, /home/erik/code/eg-movie-list/app/assets/stylesheets/tables.css.scss */
+.mdl-data-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+/* line 5, /home/erik/code/eg-movie-list/app/assets/stylesheets/tables.css.scss */
+#listings td, th {
+  width: 100%;
+  white-space: nowrap;
+  text-align: left;
+  text-overflow: ellipsis;
+  -o-text-overflow: ellipsis;
+}
+
+/* unrelated to responsive table css */
+/* line 14, /home/erik/code/eg-movie-list/app/assets/stylesheets/tables.css.scss */
+#listings {
+  margin-top: 24px;
+}
+/**
+ * vAccordion - AngularJS multi-level accordion component
+ * @version v1.6.0
+ * @link http://lukaszwatroba.github.io/v-accordion
+ * @author Łukasz Wątroba <l@lukaszwatroba.com>
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
+
+/***************************************
+  vAccordion
+ ***************************************/
+/**
+ * Example HTML:
+ *
+  <v-accordion class="vAccordion--default">
+    <v-pane>
+      <v-pane-header id="pane-header" aria-controls="pane-content">
+         [content]
+      </v-pane-header>
+      <v-pane-content id="pane-content" aria-labelledby="pane-header">
+        [content]
+      </v-pane-content>
+    </v-pane>
+  </v-accordion>
+ */
+/* Base styles
+ ***************************************/
+
+v-accordion {
+  display: block; }
+
+v-pane {
+  display: block; }
+  v-pane.is-expanded > v-pane-content > div {
+    display: visible; }
+  v-pane[disabled] > v-pane-header {
+    opacity: 0.6;
+    pointer-events: none; }
+
+v-pane-header {
+  display: block;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  outline: none; }
+  v-pane-header:focus {
+    outline: none; }
+  v-pane-header > div {
+    display: block; }
+
+v-pane-content {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  max-height: 0px; }
+  v-pane-content > div {
+    visibility: none; }
+
+/* Theme: default
+   ***************************************/
+.vAccordion--default v-accordion {
+  margin-top: 20px;
+  padding-left: 20px; }
+
+.vAccordion--default v-pane-content > div {
+  padding-bottom: 20px;
+  opacity: 0;
+  -webkit-transform: translate3d(0, 30px, 0);
+          transform: translate3d(0, 30px, 0);
+  -webkit-transition: all 0.5s;
+          transition: all 0.5s; }
+
+.vAccordion--default v-pane {
+  overflow: hidden; }
+  .vAccordion--default v-pane.is-expanded > v-pane-header {
+    border-bottom-color: #2196F3; }
+    .vAccordion--default v-pane.is-expanded > v-pane-header::after {
+      -webkit-transform: rotate(90deg);
+              transform: rotate(90deg);
+      opacity: 0; }
+    .vAccordion--default v-pane.is-expanded > v-pane-header::before {
+      -webkit-transform: rotate(0deg);
+              transform: rotate(0deg); }
+  .vAccordion--default v-pane.is-expanded > v-pane-content > div {
+    opacity: 1;
+    -webkit-transform: translate3d(0, 0, 0);
+            transform: translate3d(0, 0, 0); }
+  .vAccordion--default v-pane[disabled] v-pane-header::after, .vAccordion--default v-pane[disabled] v-pane-header::before {
+    display: none; }
+
+.vAccordion--default v-pane-header {
+  padding: 5px 0;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #D8D8D8;
+  -webkit-transition: all 0.25s;
+          transition: all 0.25s; }
+  .vAccordion--default v-pane-header::after, .vAccordion--default v-pane-header::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background-color: #2196F3;
+    -webkit-transform-origin: 50% 50%;
+            transform-origin: 50% 50%;
+    will-change: transform;
+    -webkit-transition: all 0.25s;
+            transition: all 0.25s; }
+  .vAccordion--default v-pane-header::before {
+    -webkit-transform: rotate(-90deg);
+            transform: rotate(-90deg); }
+  .vAccordion--default v-pane-header:hover, .vAccordion--default v-pane-header:focus {
+    color: #2196F3; }
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any styles
+ * defined in the other CSS/SCSS files in this directory. It is generally better to create a new
+ * file per style scope.
+ *
+
+
+
+ */
+

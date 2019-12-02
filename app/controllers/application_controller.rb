@@ -236,7 +236,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate
-    if params['password'] != ENV['IOPASSWORD']
+    if (params['password'] != ENV['IOPASSWORD']) && Rails.env == "production"
       head :forbidden
       return true
     else

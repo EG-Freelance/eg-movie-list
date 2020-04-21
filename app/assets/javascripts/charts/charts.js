@@ -135,42 +135,12 @@ angular.module('EgMovieList.Charts', [
     var base_url = 'https://www.omdbapi.com/?apikey=b03879be&'
     if(!imdb_id){
       var url = base_url + 't=' + encodeURI(series) + '&y=' + year;
-      $http.get(url)
-      .then(function(response){
-        if(response.data.Response == "False"){
-          chartsCtrl.loading = false;
-          chartsCtrl.showCanvas = false;
-          if(canvas){
-            var ctx = canvas.getContext('2d');
-            ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-          }
-          chartsCtrl.series_list = {};
-          chartsCtrl.chart_title = "Series not found";
-          return false;
-        }
-        var imdb_id = response.data.imdbID;
-        chartsCtrl.chart_title = response.data.Title;
-        chartsCtrl.watch_link = "https://www.justwatch.com/us/search?q=" + encodeURI(chartsCtrl.chart_title);
-        // console.log("aaa" + imdb_id);
-        episodesFactory.getEpisodes(imdb_id)
-        .then(function(response){
-          chartsCtrl.series_list = response.data;
-
-          organize_chart_data(chartsCtrl.series_list);
-
-        }, function(data, status) {
-          chartsCtrl.loading = false;
-          chartsCtrl.showCanvas = false;
-          if(canvas){
-            var ctx = canvas.getContext('2d');
-            ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
-          }
-          chartsCtrl.series_list = {};
-          chartsCtrl.chart_title = "Missing episode data";
-
-          $log.log(data.error + ' ' + status);
-        });
-      }, function(data, status) {
+    }else{
+      var url = base_url + 'i=' + imdb_id;
+    }
+    $http.get(url)
+    .then(function(response){
+      if(response.data.Response == "False"){
         chartsCtrl.loading = false;
         chartsCtrl.showCanvas = false;
         if(canvas){
@@ -179,11 +149,40 @@ angular.module('EgMovieList.Charts', [
         }
         chartsCtrl.series_list = {};
         chartsCtrl.chart_title = "Series not found";
+        return false;
+      }
+      var imdb_id = response.data.imdbID;
+      chartsCtrl.chart_title = response.data.Title;
+      chartsCtrl.watch_link = "https://www.justwatch.com/us/search?q=" + encodeURI(chartsCtrl.chart_title);
+      episodesFactory.getEpisodes(imdb_id)
+      .then(function(response){
+        chartsCtrl.series_list = response.data;
+
+        organize_chart_data(chartsCtrl.series_list);
+
+      }, function(data, status) {
+        chartsCtrl.loading = false;
+        chartsCtrl.showCanvas = false;
+        if(canvas){
+          var ctx = canvas.getContext('2d');
+          ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+        }
+        chartsCtrl.series_list = {};
+        chartsCtrl.chart_title = "Missing episode data";
+
         $log.log(data.error + ' ' + status);
       });
-    }
-
-    
+    }, function(data, status) {
+      chartsCtrl.loading = false;
+      chartsCtrl.showCanvas = false;
+      if(canvas){
+        var ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+      }
+      chartsCtrl.series_list = {};
+      chartsCtrl.chart_title = "Series not found";
+      $log.log(data.error + ' ' + status);
+    });
   }
   
   function set_options(opts){

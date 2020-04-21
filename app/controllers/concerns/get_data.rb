@@ -19,13 +19,13 @@ module GetData
         air_date_reg = info.css('.airdate')[0].text.match(/\d{1,2}\s[A-Za-z]{3}\.?\s\d{4}/)
         if air_date_reg.nil?
           # break if no date is listed
-          return "break"
+          next
         end
         air_date_raw = air_date_reg[0].gsub(".", "")
         air_date = DateTime.strptime(air_date_raw, "%d %b %Y").strftime("%F")
         if air_date > Date.today.strftime("%F")
           # break if date is in the future
-          return "break"
+          next
         end
         ep_data['air_date'] = air_date
         ep_data['rating'] = info.css('.ipl-rating-star.small .ipl-rating-star__rating').text
